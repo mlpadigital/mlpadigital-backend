@@ -1,4 +1,3 @@
-// src/middleware/auth.middleware.js
 import { verifyToken } from "../utils/jwt.js";
 
 /**
