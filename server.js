@@ -1,21 +1,25 @@
-//src/server.js
+// server.js
 import express from 'express';
-import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { connectDB } from './src/config/db.js'; // ✅ Importás la función
+
+// Importás las rutas
 import userRoutes from './src/routes/user.routes.js';
 import clientRoutes from './src/routes/client.routes.js';
 import adminisUsersRouter from './src/routes/adminUsers.js';
+import chatRoutes from './src/routes/chat.js';
+import './src/services/verificarPagos.js';
 
-dotenv.config();
+dotenv.config(); // ✅ Cargás las variables de entorno
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-// Middleware
-app.use('/api', adminisUsersRouter);
+
+// Middlewares
 app.use(cors());
 app.use(express.json());
-// BONUS: Logger solo en desarrollo
+
 if (process.env.NODE_ENV !== 'production') {
   app.use((req, res, next) => {
     console.log(`📥 ${req.method} ${req.url}`);
@@ -23,17 +27,15 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
+// Rutas
+app.use('/api', adminisUsersRouter);
 app.use('/api/user', userRoutes);
 app.use('/api/clientes', clientRoutes);
+app.use('/api/chat', chatRoutes);
 
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log('✅ Conectado a MongoDB');
-    app.listen(PORT, () => {
-      console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
-    });
-  })
-  .catch((err) => {
-    console.error('❌ Error de conexión a MongoDB:', err);
+// Conectás a MongoDB y luego levantás el servidor
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
   });
-  
+});

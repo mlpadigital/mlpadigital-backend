@@ -1,12 +1,22 @@
 // backend/src/index.js
+import storeRoutes from './routes/store.routes.js';
+import productRoutes from './routes/product.routes.js';
+import aiRoutes from './routes/ai.routes.js';
+
+app.use('/api/store', storeRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/ai', aiRoutes);
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { connectDB } from "./config/db.js";
+import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
 
 dotenv.config();
+
+const chatRoutes = require('./routes/chat');
+app.use('/api/chat', chatRoutes);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
